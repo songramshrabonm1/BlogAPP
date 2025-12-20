@@ -1,0 +1,18 @@
+import React from 'react'
+import { Navbar } from '../Component/Navbar'
+import { Header } from '../Component/Header'
+import { BlogList } from '../Component/BlogList'
+import { Newsletter } from '../Component/Newsletter'
+import { Footer } from '../Component/Footer'
+
+export const Home = () => {
+  return (
+    <div>
+       <Navbar></Navbar>
+       <Header></Header>
+       <BlogList></BlogList>
+       <Newsletter></Newsletter>
+       <Footer></Footer>
+    </div>
+  )
+}
