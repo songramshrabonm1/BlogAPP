@@ -1,20 +1,22 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { assets } from "../assets/assets";
+import styles from "./bubble.module.css";
+
 
 const ShuffleHero = () => {
   return (
     <section className="w-full px-4 py-12 grid grid-cols-1 sm:grid-cols-2  md:grid-cols-2 items-center gap-8 max-w-9xl mx-auto">
       <div>
-        
         <h3 className="text-6xl sm:text-6xl  text-center font-semibold">
-          Your Own{" "}
+          <BubbleText />{" "}
           <span className="text-primary text-6xl sm:text-6xl font-bold ">
             <FlipLink>space</FlipLink>
 
             {/* <FlipLink>L</FlipLink> <FlipLink>O</FlipLink> <FlipLink>G</FlipLink> <FlipLink>G</FlipLink> <FlipLink>I</FlipLink> <FlipLink>N</FlipLink> <FlipLink>G</FlipLink>  */}
           </span>{" "}
-          TO WRITE 
+          {/* TO WRITE */}
+          <BubbleTextTwo></BubbleTextTwo>
         </h3>
         <p className="text-base md:text-lg text-center text-amber-200 -700 my-4 md:my-6">
           This is your space to think out loud, to share what matters, and to
@@ -222,6 +224,31 @@ const FlipLink = ({ children, href }) => {
         ))}
       </div>
     </motion.a>
+  );
+};
+
+
+const BubbleText = () => {
+  return (
+    <h2 className="text-center text-5xl font-thin text-indigo-300">
+      {"Your Own".split("").map((child, idx) => (
+        <span className={styles.hoverText} key={idx}>
+          {child}
+        </span>
+      ))}
+    </h2>
+  );
+};
+
+const BubbleTextTwo = () => {
+  return (
+    <h2 className="text-center text-5xl font-thin text-indigo-300">
+      {"TO WRITE".split("").map((child, idx) => (
+        <span className={styles.hoverText} key={idx}>
+          {child}
+        </span>
+      ))}
+    </h2>
   );
 };
 
