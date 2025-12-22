@@ -1,4 +1,9 @@
 import React, { useState } from 'react'
+import { useRef } from "react";
+// import { FiLock } from "react-icons/fi";
+import { CiSearch } from "react-icons/ci";
+
+
 import { blog_data, blogCategories } from '../assets/assets'
 import { motion, spring } from 'framer-motion';
 import { BlogCard } from './BlogCard';
@@ -12,16 +17,19 @@ export const BlogList = () => {
           <input
             type="text"
             placeholder="Search For Blog"
-            className="  outline-none border border-r sm:border-r-0  border-gray-400 w-40 sm:w-120 py-5 rounded   h-full px-3 text-gray-300"
+            className="  outline-none border border-b-0   border-gray-400 w-40 sm:w-120 py-5 rounded   h-full px-3 text-gray-300"
             required
           />
 
-          <button
+          {/* <button
             type="submit"
             className="   md:px-12 px-4 sm:px-4 py-5  text-white bg-primary/80 hover:bg-primary transition-all rounded-md   sm:rounded-l-none cursor-pointer"
           >
             Search
-          </button>
+          </button> */}
+          <div className="grid  place-content-center ">
+            <EncryptButton />
+          </div>
         </form>
       </div>
 
@@ -56,3 +64,83 @@ export const BlogList = () => {
     </div>
   );
 }
+
+
+
+const TARGET_TEXT = "SEARCH BLOG";
+const CYCLES_PER_LETTER = 2;
+const SHUFFLE_TIME = 50;
+
+const CHARS = "!@#$%^&*():{};|,.<>/?";
+
+const EncryptButton = () => {
+  const intervalRef = useRef(null);
+
+  const [text, setText] = useState(TARGET_TEXT);
+
+  const scramble = () => {
+    let pos = 0;
+
+    intervalRef.current = setInterval(() => {
+      const scrambled = TARGET_TEXT.split("")
+        .map((char, index) => {
+          if (pos / CYCLES_PER_LETTER > index) {
+            return char;
+          }
+
+          const randomCharIndex = Math.floor(Math.random() * CHARS.length);
+          const randomChar = CHARS[randomCharIndex];
+
+          return randomChar;
+        })
+        .join("");
+
+      setText(scrambled);
+      pos++;
+
+      if (pos >= TARGET_TEXT.length * CYCLES_PER_LETTER) {
+        stopScramble();
+      }
+    }, SHUFFLE_TIME);
+  };
+
+  const stopScramble = () => {
+    clearInterval(intervalRef.current || undefined);
+
+    setText(TARGET_TEXT);
+  };
+
+  return (
+    <motion.button
+      whileHover={{
+        scale: 1.025,
+      }}
+      whileTap={{
+        scale: 0.975,
+      }}
+      onMouseEnter={scramble}
+      onMouseLeave={stopScramble}
+      className="group relative overflow-hidden rounded-lg border-[1px] border-neutral-500 bg-neutral-700 px-4 py-2 font-mono font-medium uppercase text-neutral-300 transition-colors hover:text-indigo-300"
+    >
+      <div className="relative z-10 flex items-center gap-5">
+        <CiSearch />
+        <span>{text}</span>
+      </div>
+      <motion.span
+        initial={{
+          y: "100%",
+        }}
+        animate={{
+          y: "-100%",
+        }}
+        transition={{
+          repeat: Infinity,
+          repeatType: "mirror",
+          duration: 1,
+          ease: "linear",
+        }}
+        className="duration-300 absolute inset-0 z-0 scale-125 bg-gradient-to-t from-indigo-400/0 from-40% via-indigo-400/100 to-indigo-400/0 to-60% opacity-0 transition-opacity group-hover:opacity-100"
+      />
+    </motion.button>
+  );
+};

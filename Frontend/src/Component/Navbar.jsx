@@ -19,7 +19,7 @@ export const Navbar = () => {
       </div>
 
       <button
-        onClick={() => navigate("/admin")}
+        onClick={() => navigate("/signIn")}
         className="flex items-center gap-2 rounded-full text-sm  cursor-pointer bg-primary text-white px-10 py-2.5"
       >
         Login
