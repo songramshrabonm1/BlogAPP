@@ -7,7 +7,7 @@ import  penAndPaper  from "../../src/assets/penAndPaper.png";
 export const Navbar = () => {
     const navigate = useNavigate() ;
   return (
-    <div className="flex justify-between items-center py-5 mx-8 sm:mx-20 xl:mx-32 ">
+    <div className="flex justify-between bg-black items-center py-5 px-8 sm:px-20 xl:px-32 ">
       <div>
         <img
           onClick={() => navigate("/")}
@@ -15,7 +15,6 @@ export const Navbar = () => {
           alt="logo "
           className="w-10 sm:w-14 cursor-pointer"
         />
-        {/* <p className='text-sm font-bold text-primary'>MidNight_Throught</p> */}
       </div>
 
       <button

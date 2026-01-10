@@ -6,12 +6,12 @@ const cors = require('cors') ;
 const connectDb = require('./config/db')
 
 dotenv.config() ; 
-const PORT = process.env.port || 5000;
+const port  = process.env.PORT || 5000;
 
 // middleware
 app.use(
   cors({
-    origin: "http://localhost:5173/",
+    origin: "http://localhost:5173",
     credentials: true,
   })
 );
@@ -21,8 +21,8 @@ app.use(express.urlencoded({extended: true})) ;
 
 
 
-app.listen(PORT, async() => {
+app.listen(port , async() => {
   await connectDb() ; 
-  console.log(`Server is running at the server - ${PORT}`);
+  console.log(`Server is running at the server - ${port}`);
 });
 

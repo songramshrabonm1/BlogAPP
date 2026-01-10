@@ -4,15 +4,18 @@ import { Header } from '../Component/Header'
 import { BlogList } from '../Component/BlogList'
 import { Newsletter } from '../Component/Newsletter'
 import { Footer } from '../Component/Footer'
+import { Outlet } from 'react-router-dom'
+// import { Outlet } from 'react-router'
 
 export const Home = () => {
   return (
     <div>
-       <Navbar></Navbar>
-       <Header></Header>
+      <Navbar></Navbar>
+      {/* <Header></Header>
        <BlogList></BlogList>
-       <Newsletter></Newsletter>
-       <Footer></Footer>
+       <Newsletter></Newsletter> */}
+      <Outlet></Outlet>
+      <Footer></Footer>
     </div>
-  )
+  );
 }
