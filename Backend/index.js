@@ -3,6 +3,7 @@ const app = express() ;
 const cookieParser = require("cookie-parser");
 const dotenv = require('dotenv')
 const cors = require('cors') ; 
+const connectDb = require('./config/db')
 
 dotenv.config() ; 
 const PORT = process.env.port || 5000;
@@ -20,7 +21,8 @@ app.use(express.urlencoded({extended: true})) ;
 
 
 
-app.listen(PORT, () => {
+app.listen(PORT, async() => {
+  await connectDb() ; 
   console.log(`Server is running at the server - ${PORT}`);
 });
 
