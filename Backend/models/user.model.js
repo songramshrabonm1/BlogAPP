@@ -1,8 +1,7 @@
-import mongoose from "mongoose";
-
+const mongoose = require('mongoose') ; 
 const userSchema = new mongoose.Schema(
   {
-    username: {
+    UserName: {
       type: String,
       required: true,
       unique: true,
@@ -25,10 +24,43 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    // OTP PART START
+    resetOtp : {
+      type : String , 
+    },
+    isOtpVerified : {
+      type : Boolean , 
+      default : false , 
+    },
+    otpExpired : {
+      type : Date, 
+    },
+    // OTP PART END
+
+
+    refreshToken: [
+      // refreshToken ja longterm hoy ar database e save thake
+      // longterm & save database
+      {
+        token: {
+          type: String,
+          required: true,
+        },
+        expiresAt: {
+          type: Date,
+          required: true,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now(),
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
 
 const User = mongoose.model("User", userSchema);
 
-export default User;
+module.exports = User; 

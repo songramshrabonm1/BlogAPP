@@ -3,7 +3,9 @@ const app = express() ;
 const cookieParser = require("cookie-parser");
 const dotenv = require('dotenv')
 const cors = require('cors') ; 
-const connectDb = require('./config/db')
+const connectDb = require('./config/db');
+const UserRouter = require('./Routers/user.route');
+const authRouter = require('./Routers/auth.route');
 
 dotenv.config() ; 
 const port  = process.env.PORT || 5000;
@@ -18,6 +20,25 @@ app.use(
 app.use(express.json()) ; 
 app.use(cookieParser());
 app.use(express.urlencoded({extended: true})) ; 
+
+
+// ROUTER IMPORT
+app.use('/api/user', UserRouter);
+app.use('/api/auth', authRouter);
+app.use((err,req,res,next)=>{
+  const StatusCode = err.statusCode || 500; 
+  const message = err.message || "INTERNAL SERVER ERROR" ; 
+  res.status(StatusCode).json({
+    success : false, 
+    StatusCode , 
+    message 
+  })
+})
+
+
+app.get('/' , async(req,res)=>{
+  res.send("HELLOOOOOOOOOO BLOGPOST")
+})
 
 
 
