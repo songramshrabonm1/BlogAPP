@@ -6,11 +6,11 @@ import styles from "./bubble.module.css";
 
 const ShuffleHero = () => {
   return (
-    <section className="w-full px-4 py-12 grid grid-cols-1 sm:grid-cols-2  md:grid-cols-2 items-center gap-8 max-w-9xl mx-auto">
+    <section className="w-full bg-black px-4 py-12 grid grid-cols-1 sm:grid-cols-2  md:grid-cols-2 items-center gap-8 max-w-9xl mx-auto">
       <div>
         <h3 className="text-6xl sm:text-6xl  text-center font-semibold">
           <BubbleText />{" "}
-          <span className="text-primary text-6xl sm:text-6xl font-bold ">
+          <span className="text-[#832E22] text-6xl sm:text-6xl font-bold ">
             <FlipLink>space</FlipLink>
 
             {/* <FlipLink>L</FlipLink> <FlipLink>O</FlipLink> <FlipLink>G</FlipLink> <FlipLink>G</FlipLink> <FlipLink>I</FlipLink> <FlipLink>N</FlipLink> <FlipLink>G</FlipLink>  */}
@@ -18,7 +18,7 @@ const ShuffleHero = () => {
           {/* TO WRITE */}
           <BubbleTextTwo></BubbleTextTwo>
         </h3>
-        <p className="text-base md:text-lg text-center text-amber-200 -700 my-4 md:my-6">
+        <p className="text-base md:text-lg text-center text-white -700 my-4 md:my-6">
           This is your space to think out loud, to share what matters, and to
           write without filters. Whether it's one word or a thousand, your story
           starts right here.

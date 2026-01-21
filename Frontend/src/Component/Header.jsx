@@ -8,9 +8,8 @@ import { BlogList } from './BlogList';
 
 export const Header = () => {
   return (
-    <div className=''>
+    <div >
         <ShuffleHero></ShuffleHero>
-        {/* <Outlet></Outlet> */}
         <BlogList></BlogList>
         <Newsletter></Newsletter>
     </div>

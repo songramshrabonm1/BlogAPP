@@ -14,10 +14,93 @@ import { IoIosStar } from "react-icons/io";
 import "./authentication.css";
 import { AnimatePresence } from "motion/react";
 import * as motion from "motion/react-client";
+import { FaRegEye } from "react-icons/fa";
+import { FaEyeSlash } from "react-icons/fa";
 
-import { Link } from "react-router";
+
+import { FiCheckSquare, FiX } from "react-icons/fi";
+// import { AnimatePresence, motion } from "framer-motion";
+
+
+
+import { Link, useNavigate } from "react-router";
 import { scale } from "motion";
+
+
+// REDUX FUNCTION IMPORT 
+import { useState, useEffect } from "react";
 export const SignUp = () => {
+  const [notifications, setNotifications] = useState([]);
+  const removeNotif = (id) => {
+    setNotifications((pv) => pv.filter((n) => n.id !== id));
+  };
+
+
+  const navigate = useNavigate() ; 
+
+
+  const [formData , setFormData] = useState({}) ; 
+  const [Check, setCheck] = useState(false);
+
+  const [ErrorMessage , SetErrorMessage] = useState('') ; 
+
+
+  const [showPass, setShowPass] = useState(false) ; 
+  const [reShowPass , setReShowPass] = useState(false) ; 
+
+  const handleChange = (e)=>{
+    e.preventDefault(); 
+    if (e.target.id === "CheckBox"){
+      setCheck(e.target.checked); 
+      return ; 
+    }
+    const newData = {...formData , [e.target.id] : e.target.value.trim()} ; 
+    setFormData(newData);
+    console.log(e.target.id , e.target.value) ; 
+  }
+  const handleSubmit = async(e)=>{
+    e.preventDefault() ; 
+    if(Check !== true){
+      SetErrorMessage(
+        "Please agree to the terms and conditions before signing up."
+      );
+      setNotifications((pv) => [generateRandomNotif(ErrorMessage), ...pv]);
+
+      return ; 
+    }
+    if (formData.password !== formData.reTypePassword){
+      SetErrorMessage(
+        "Password Is Not Match...."
+      );
+      setNotifications((pv) => [generateRandomNotif(ErrorMessage), ...pv]);
+      return ;
+    }
+      try {
+        const res = await fetch("/api/auth/signUp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            UserName: formData.userName,
+            email: formData.email,
+            password: formData.password,
+          }),
+        });
+        const data = await res.json();
+        if (data.success == false) {
+          SetErrorMessage("SignUp Unsuccessfull.....");
+          setNotifications((pv) => [generateRandomNotif(ErrorMessage), ...pv]);
+        }
+        if (res.ok) {
+          navigate("/signIn");
+        }
+      } catch (error) {
+        SetErrorMessage(`${error.message}`);
+        setNotifications((pv) => [generateRandomNotif(ErrorMessage), ...pv]);
+        console.log(error);
+      }
+    console.log('FormData', formData);
+  }
+
   return (
     <div className="flex flex-col-reverse  bg-black  sm:flex-row lg:flex-row   justify-center items-start pt-10 sm:pt-5 px-1  sm:pr-10">
       {/* LEFT SIDE  */}
@@ -32,103 +115,153 @@ export const SignUp = () => {
           Join DarkSphere and start sharing your ideas with the world.
         </p>
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            className="w-full py-2"
-            initial={{ y: 30, opacity: 0 }}
-            transition={{ duration: 0.9 }}
-            exit={{ y: -10, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
+        <form onSubmit={handleSubmit}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              className="w-full py-2"
+              initial={{ y: 30, opacity: 0 }}
+              transition={{ duration: 1.2 }}
+              exit={{ y: -10, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+            >
+              <label
+                value="userName"
+                className="text-gray-400 my-3"
+                htmlFor="username"
+              >
+                User Name
+              </label>
+              <input
+                required
+                id="userName"
+                onChange={handleChange}
+                className="w-full py-2 px-2 border border-gray-400 rounded outline-red-400 "
+                type="text"
+                placeholder="Enter Your Email"
+              />
+            </motion.div>
+          </AnimatePresence>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              initial={{ y: 30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -20, opacity: 0 }}
+              transition={{ duration: 1.2 }}
+              className="w-full py-2"
+            >
+              <label className="text-gray-400 my-3" htmlFor="email">
+                Email
+              </label>
+              <input
+                id="email"
+                required
+                onChange={handleChange}
+                className="w-full py-2 px-2 border border-gray-400 rounded outline-red-400 "
+                type="email"
+                placeholder="Enter Your Email"
+              />
+            </motion.div>
+          </AnimatePresence>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              exit={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 1.2 }}
+              className="w-full py-2 relative"
+            >
+              <label className="text-gray-400 my-3" htmlFor="password">
+                Password
+              </label>
+              <input
+                id="password"
+                required
+                onChange={handleChange}
+                className="w-full py-2 px-2 border border-gray-400 rounded outline-red-400 "
+                type={showPass ? "text" : "password"}
+                placeholder="Enter Your Password"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  setShowPass(!showPass);
+                }}
+                className=" absolute  bottom-5 right-5"
+              >
+                {showPass ? <FaRegEye /> : <FaEyeSlash />}
+              </button>
+            </motion.div>
+          </AnimatePresence>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              className="w-full py-2 relative"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -20, opacity: 1 }}
+              transition={{ duration: 1.2 }}
+            >
+              <label className="text-gray-400 my-3" htmlFor="password">
+                Re-type Password
+              </label>
+              <input
+                id="reTypePassword"
+                required
+                onChange={handleChange}
+                className="w-full  py-2 px-2  border border-gray-400 rounded outline-red-400 "
+                type={reShowPass ? "text" : "password"}
+                placeholder="Re-Type Your Password"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  setReShowPass(!reShowPass);
+                }}
+                className=" absolute  bottom-5 right-5"
+              >
+                {reShowPass ? <FaRegEye /> : <FaEyeSlash />}
+              </button>
+            </motion.div>
+          </AnimatePresence>
+
+          <div className="flex justify-center gap-2 items-center">
+            <input type="checkbox" id="CheckBox" onChange={handleChange} />
+            <p className="font_poppins text-wrap text-xs text-gray-300 my-10">
+              By signing up, I agree to the terms and conditions, privacy
+              policy, and cookie policy
+            </p>
+          </div>
+
+          <button
+            type="submit"
+            className="btn text-center w-full py-4 bg-red-500 hover:bg-amber-700"
           >
-            <label className="text-gray-400 my-3" htmlFor="username">
-              User Name
-            </label>
-            <input
-              className="w-full py-2 px-2 border border-gray-400 rounded outline-red-400 "
-              type="text"
-              placeholder="Enter Your Email"
-            />
-          </motion.div>
-        </AnimatePresence>
-
-        <AnimatePresence mode="wait">
-          <motion.div
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -20, opacity: 0 }}
-            transition={{ duration: 0.9 }}
-            className="w-full py-2"
-          >
-            <label className="text-gray-400 my-3" htmlFor="email">
-              Email
-            </label>
-            <input
-              className="w-full py-2 px-2 border border-gray-400 rounded outline-red-400 "
-              type="email"
-              placeholder="Enter Your Email"
-            />
-          </motion.div>
-        </AnimatePresence>
-
-        <AnimatePresence mode="wait">
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            exit={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.9 }}
-            className="w-full py-2"
-          >
-            <label className="text-gray-400 my-3" htmlFor="password">
-              Password
-            </label>
-            <input
-              className="w-full py-2 px-2 border border-gray-400 rounded outline-red-400 "
-              type="password"
-              placeholder="Enter Your Password"
-            />
-          </motion.div>
-        </AnimatePresence>
-
-        <AnimatePresence mode="wait">
-          <motion.div
-            className="w-full py-2"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -20, opacity: 1 }}
-            transition={{ duration: 0.9 }}
-          >
-            <label className="text-gray-400 my-3" htmlFor="password">
-              Re-type Password
-            </label>
-            <input
-              className="w-full py-2 px-2 border border-gray-400 rounded outline-red-400 "
-              type="password"
-              placeholder="Re-Type Your Password"
-            />
-          </motion.div>
-        </AnimatePresence>
-
-        <div className="flex justify-center gap-2 items-center">
-          <input type="checkbox" />
-          <p className="font_poppins text-wrap text-xs text-gray-300 my-10">
-            By signing up, I agree to the terms and conditions, privacy policy,
-            and cookie policy
-          </p>
-        </div>
-
-        <button className="btn text-center w-full py-4 bg-red-500 hover:bg-amber-700">
-          SIGN UP
-        </button>
+            SIGN UP
+          </button>
+        </form>
 
         <p className="font_poppins text-wrap text-gray-300 text-xs my-5">
-          Already have an account?{" "}
-          <Link to={"/signIn"} className="text-blue-400 hover:underline">
-            {" "}
-            Sign in{" "}
+          Already have an account?
+          <Link to={"/signIn"} className="text-[#f05252] hover:underline">
+            Sign in
           </Link>
         </p>
       </div>
       {/* END LEFT SIDE */}
+
+      {/* NOTIFICATION ERROR START */}
+
+      <div className="flex flex-col gap-1 w-72 fixed top-2 right-2 z-50 pointer-events-none">
+        <AnimatePresence>
+          {notifications.map((n) => (
+            <Notification removeNotif={removeNotif} {...n} key={n.id} />
+          ))}
+        </AnimatePresence>
+      </div>
+
+      {/* NOTIFICATION ERROR END */}
 
       {/* RIGHT SIDE */}
       <div
@@ -153,7 +286,7 @@ export const SignUp = () => {
             initial={{ y: -210, opacity: 0 }}
             animate={{ y: -10, opacity: 1 }}
             exit={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.9 }}
+            transition={{ duration: 1.9 }}
           >
             {/*  */}
             <div className=" absolute left-5 sm:left-10  bottom-5 sm:bottom-10 md:bottom-20 lg:bottom-40 ">
@@ -217,3 +350,49 @@ export const SignUp = () => {
     </div>
   );
 };
+
+
+
+const NOTIFICATION_TTL = 5000;
+
+
+const Notification = ({ text, id, removeNotif }) => {
+  useEffect(() => {
+    const timeoutRef = setTimeout(() => {
+      removeNotif(id);
+    }, NOTIFICATION_TTL);
+
+    return () => clearTimeout(timeoutRef);
+  }, []);
+
+  return (
+    <motion.div
+      layout
+      initial={{ y: -15, scale: 0.95 }}
+      animate={{ y: 0, scale: 1 }}
+      exit={{ x: "100%", opacity: 0 }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
+      className="p-2 flex items-start rounded gap-2 text-xs font-medium shadow-lg text-white bg-[#F05252] pointer-events-auto"
+    >
+      <FiCheckSquare className=" mt-0.5" />
+      <span>{text}</span>
+      <button onClick={() => removeNotif(id)} className="ml-auto mt-0.5">
+        <FiX />
+      </button>
+    </motion.div>
+  );
+};
+
+
+
+const generateRandomNotif = (ErrorMessages) => {
+  const data = {
+    id: Math.random(),
+    text: ErrorMessages,
+  };
+
+  return data;
+};
+
+
+

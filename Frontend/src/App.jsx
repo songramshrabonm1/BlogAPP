@@ -33,14 +33,15 @@ function App() {
       </Routes> */}
       <Routes>
         <Route path="/" element={<Home></Home>}>
-          <Route path="signIn/" element={<SignIn></SignIn>}>
-            {" "}
-          </Route>
+          <Route path="signIn/" element={<SignIn></SignIn>}></Route>
           <Route path="signUp" element={<SignUp></SignUp>}></Route>
           <Route path="/blog" element={<Blog></Blog>}></Route>
-          <Route path="/" element={<Header></Header>}>
-          </Route>
-
+          <Route path="/" element={<Header></Header>}></Route>
+          <Route path="otp" element={<Otp></Otp>}></Route>
+          <Route
+            path="forgetPass"
+            element={<ForgetPassword></ForgetPassword>}
+          ></Route>
           <Route path="/about" element={<About></About>}></Route>
           <Route path="/dashboard" element={<Dashboard></Dashboard>}></Route>
         </Route>

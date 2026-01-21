@@ -5,14 +5,14 @@ import { CiSearch } from "react-icons/ci";
 
 
 import { blog_data, blogCategories } from '../assets/assets'
-import { motion, spring } from 'framer-motion';
+import { AnimatePresence, motion, spring } from 'framer-motion';
 import { BlogCard } from './BlogCard';
 
 export const BlogList = () => {
     const [menu , setMenu] = useState('All'); 
   return (
-    <div>
-      <div className=" flex flex-col justify-center items-center text-center space-y-2  ">
+    <div className="bg-black text-white">
+      <div className=" bg-black flex flex-col justify-center items-center text-center space-y-2  ">
         <form action="relative w-full  max-w-2xl h-12 md:h-13">
           <input
             type="text"
@@ -21,12 +21,6 @@ export const BlogList = () => {
             required
           />
 
-          {/* <button
-            type="submit"
-            className="   md:px-12 px-4 sm:px-4 py-5  text-white bg-primary/80 hover:bg-primary transition-all rounded-md   sm:rounded-l-none cursor-pointer"
-          >
-            Search
-          </button> */}
           <div className="grid  place-content-center ">
             <EncryptButton />
           </div>
@@ -38,8 +32,8 @@ export const BlogList = () => {
           <div key={item} className="relative">
             <button
               onClick={() => setMenu(item)}
-              className={`text-gray-400 ${
-                item === menu && "text-white px-4 pt-0.5"
+              className={` ${
+                item === menu ? "text-black px-4 pt-0.5 " : "text-gray-400"
               } `}
             >
               {item}
@@ -47,20 +41,29 @@ export const BlogList = () => {
                 <motion.div
                   layoutId="underline"
                   transition={{ type: spring, stiffness: 500, damping: 20 }}
-                  className="absolute left-0 right-0 top-0 h-7 -z-1 bg-primary rounded-full"
-                ></motion.div>
+                  className="absolute left-0 right-0 top-0 h-7  bg-[#ff627e] rounded-full z-10"
+                >
+                  {menu}
+                </motion.div>
               )}
             </button>
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8 mb-24 mx-8 sm:mx-16 xl:mx-40">
-        {blog_data
-          .filter((blogs) => (menu === "All" ? true : menu === blogs.category))
-          .map((blog) => (
-            <BlogCard key={blog._id} blog={blog}></BlogCard>
-          ))}
-      </div>
+
+      <AnimatePresence mode="wait">
+        <motion.div key={menu} initial={{y:10 , opacity:0}} animate={{y:0, opacity:1}} exit={{y:-10 , opacity:0}} transition={{duration:0.8}}>
+          <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8 mb-24 mx-8 sm:mx-16 xl:mx-40">
+            {blog_data
+              .filter((blogs) =>
+                menu === "All" ? true : menu === blogs.category,
+              )
+              .map((blog) => (
+                <BlogCard key={blog._id} blog={blog}></BlogCard>
+              ))}
+          </div>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

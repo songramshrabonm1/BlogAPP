@@ -1,10 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from "react";
 import { FiCreditCard, FiMail, FiUser, FiUsers } from "react-icons/fi";
-import { Link, Links } from 'react-router';
-import  './authentication.css'; 
+import { Link, Links, useNavigate } from "react-router";
+import "./authentication.css";
 import { FaFacebook } from "react-icons/fa";
 import { FaSquareGithub } from "react-icons/fa6";
 import { FaGoogle } from "react-icons/fa";
+
+
+import { FiCheckSquare, FiX } from "react-icons/fi";
 
 import useMeasure from "react-use-measure";
 import {
@@ -14,22 +17,87 @@ import {
   motion,
   AnimatePresence,
 } from "framer-motion";
-
-
+import { signInFailure , signInStart, signInSuccess } from "../../redux/feature/user/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { Spinner } from "flowbite-react";
 
 export const SignIn = () => {
-    const [open, setOpen] = useState(false);
-    const [oopen , setOOpen] = useState(false) ; 
+  const [open, setOpen] = useState(false);
+  const [oopen, setOOpen] = useState(false);
+  const [formData, setFormData] = useState({});
+
+    const [notifications, setNotifications] = useState([]);
+    const removeNotif = (id) => {
+       setNotifications((pv) => pv.filter((n) => n.id !== id));
+    };
+
+
+  // errorMessage
+
+
+  const navigate = useNavigate();
+  
+  const Dispatch = useDispatch() ; 
+  
+  const { loading, error: errorMessage } = useSelector((state) => state.user); 
+  
+
+  const handleChange = (e) => {
+    const FormData = { ...formData, [e.target.id]: e.target.value.trim() };
+    console.log('FormData: ' , FormData);
+    setFormData(FormData);
+  };
+  const handleSubmit = async (e) => {
+
+   try{
+
+     e.preventDefault();
+     Dispatch(signInStart());
+     console.log("HELLO");
+     console.log(formData);
+     const res = await fetch("/api/auth/signIn", {
+       method: "POST",
+       headers: { "Content-type": "application/json" },
+       body: JSON.stringify({
+         email: formData.email,
+         password: formData.password,
+       }),
+     });
+     console.log("Res: ", res);
+     const data = await res.json();
+     console.log("data: ", data);
+     if (data.success === false) {
+            setNotifications((pv) => [
+              generateRandomNotif(data.message),
+              ...pv,
+            ]);
+
+       Dispatch(signInFailure(data.message)); 
+      //  alert("Failed");
+       return ;
+     }
+     if (res.ok) {
+      setNotifications((pv) => [generateRandomNotif("SignIn Successfully..."), ...pv]);
+
+       Dispatch(signInSuccess(data.user));
+       navigate("/");
+     }
+
+   }catch(error){
+    setNotifications((pv) => [generateRandomNotif(error.message), ...pv]);
+
+    Dispatch(signInFailure(error.message)); 
+   }
+  };
+
   return (
-    // <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
-    //   <Card href="#" Icon={FiUser} />
 
     <AnimatePresence mode="wait">
       <motion.div
         initial={{ y: 40, opacity: 0 }}
         exit={{ y: -10, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.4}}
+        transition={{ duration: 0.4 }}
       >
         <div className=" h-full w-full bg-black">
           <div className="min-h-screen  py-20  flex justify-center items-start">
@@ -42,10 +110,11 @@ export const SignIn = () => {
               </h1>
               <p className="text-gray-400">
                 Don't have an account?{" "}
-                <Link to={"/signUp"} className="text-blue-500">
+                <Link to={"/signUp"} className="text-red-400">
                   Create one.
                 </Link>
               </p>
+              {/* <form onSubmit={handleSubmit}> */}
 
               <div className="flex gap-3  justify-between">
                 <Card href="#" Icon={FaFacebook} />
@@ -62,8 +131,10 @@ export const SignIn = () => {
                 Email
               </label>
               <input
+                id="email"
+                onChange={handleChange}
                 className="border border-gray-400 rounded py-3 px-2 outline-red-300"
-                type="text"
+                type="email"
                 placeholder="Your.email@provider.com"
                 required
               />
@@ -71,6 +142,8 @@ export const SignIn = () => {
                 Password
               </label>
               <input
+                onChange={handleChange}
+                id="password"
                 type="password"
                 placeholder="Enter Your Password"
                 className="border border-gray-400 rounded py-3 px-2 outline-red-300"
@@ -78,24 +151,39 @@ export const SignIn = () => {
               />
               <Link
                 to={"/forgetPassword"}
-                className="text-xs text-blue-500 hover:underline"
+                className="text-xs text-red-500 hover:underline"
               >
                 Forgot Password ?
               </Link>
 
-              <button className="border py-5  border-gray-400 transition-all  rounded btn bg-primary text-white  text-xl ">
-                Sign In
+              <button
+                disabled={loading}
+                onClick={handleSubmit}
+                type="submit"
+                className="border py-5  border-gray-400 transition-all  rounded btn bg-error text-white  text-xl "
+              >
+                {loading ? (
+                  <>
+                    <Spinner size="sm">
+                      <span className="pl-3">Loading...</span>
+                    </Spinner>
+                  </>
+                ) : (
+                  "Sign In"
+                )}
               </button>
+
+              {/* </form> */}
               <p className="text-gray-400 text-xs">
                 By signing in, you agree to our{" "}
-                <Link onClick={() => setOOpen(true)} className="text-blue-500">
+                <Link onClick={() => setOOpen(true)} className="text-red-500">
                   {" "}
                   Terms & Conditions{" "}
                 </Link>{" "}
                 and{" "}
                 <span
                   onClick={() => setOpen(true)}
-                  className="text-blue-500  hover:bg-indigo-600"
+                  className="text-red-500  hover:bg-black-600 hover:cursor-pointer"
                 >
                   Privacy Policy.
                 </span>
@@ -217,6 +305,17 @@ export const SignIn = () => {
                     </p>
                   </div>
                 </DragCloseDrawer>
+                <div className="flex flex-col gap-1 w-72 fixed top-2 right-2 z-50 pointer-events-none">
+                  <AnimatePresence>
+                    {notifications.map((n) => (
+                      <Notification
+                        removeNotif={removeNotif}
+                        {...n}
+                        key={n.id}
+                      />
+                    ))}
+                  </AnimatePresence>
+                </div>
               </p>
             </div>
           </div>
@@ -224,25 +323,21 @@ export const SignIn = () => {
       </motion.div>
     </AnimatePresence>
   );
-}
+};
 
-const Card = ({  Icon, href }) => {
+const Card = ({ Icon, href }) => {
   return (
     <a
       href={href}
       className="w-full p-2 rounded border-[1px] border-gray-500 relative overflow-hidden group bg-black"
     >
-      <div className=" absolute  inset-0 bg-gradient-to-r from-white  to-indigo-400 translate-y-[100%] group-hover:translate-y-[0%] transition-transform duration-200" />
+      <div className=" absolute  inset-0 bg-gradient-to-r from-white  to-red translate-y-[100%] group-hover:translate-y-[0%] transition-transform duration-200" />
 
-
-      <Icon className="absolute  z-10 -top-12 -right-12 text-9xl text-black group-hover:text-black group-hover:rotate-12 transition-transform duration-300" />
+      <Icon className="absolute  z-10 -top-12 -right-12 text-9xl text-black group-hover:text-red-500 group-hover:rotate-12 transition-transform duration-300" />
       <Icon className="mb-2 text-2xl text-white group-hover:text-black transition-colors relative z-10 duration-300 mx-auto" />
     </a>
   );
 };
-
-
-
 
 const DragCloseDrawer = ({ open, setOpen, children }) => {
   const [scope, animate] = useAnimate();
@@ -319,4 +414,45 @@ const DragCloseDrawer = ({ open, setOpen, children }) => {
       )}
     </>
   );
+};
+
+
+const NOTIFICATION_TTL = 5000;
+
+const Notification = ({ text, id, removeNotif }) => {
+  useEffect(() => {
+    const timeoutRef = setTimeout(() => {
+      removeNotif(id);
+    }, NOTIFICATION_TTL);
+
+    return () => clearTimeout(timeoutRef);
+  }, []);
+
+  return (
+    <motion.div
+      layout
+      initial={{ y: -15, scale: 0.95 }}
+      animate={{ y: 0, scale: 1 }}
+      exit={{ x: "100%", opacity: 0 }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
+      className="p-2 flex items-start rounded gap-2 text-xs font-medium shadow-lg text-white bg-[#a02038] pointer-events-auto"
+    >
+      <FiCheckSquare className=" mt-0.5" />
+      <span>{text}</span>
+      <button onClick={() => removeNotif(id)} className="ml-auto mt-0.5">
+        <FiX />
+      </button>
+    </motion.div>
+  );
+};
+
+
+const generateRandomNotif = (NotificationMessage) => {
+
+  const data = {
+    id: Math.random(),
+    text: NotificationMessage,
+  };
+
+  return data;
 };

@@ -118,7 +118,7 @@ useEffect(() => {
           RESEND OTP
         </button>
 
-        <div className="border border-primary/50 w-full rounded my-5">
+        <div className="border border-[#ff0000a2] w-full rounded my-5">
           <SpotlightButton />
         </div>
       </div>

@@ -19,10 +19,9 @@ export const Navbar = () => {
 
       <button
         onClick={() => navigate("/signIn")}
-        className="flex items-center gap-2 rounded-full text-sm  cursor-pointer bg-primary text-white px-10 py-2.5"
+        className="flex items-center gap-2 rounded-full text-sm  cursor-pointer bg-[#f05252] text-white px-10 py-2.5"
       >
         Login
-        <img src={assets.arrow} className="w-3" alt="" />
       </button>
     </div>
   );

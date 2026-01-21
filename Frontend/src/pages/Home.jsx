@@ -9,11 +9,8 @@ import { Outlet } from 'react-router-dom'
 
 export const Home = () => {
   return (
-    <div>
+    <div className='bg-black'>
       <Navbar></Navbar>
-      {/* <Header></Header>
-       <BlogList></BlogList>
-       <Newsletter></Newsletter> */}
       <Outlet></Outlet>
       <Footer></Footer>
     </div>
