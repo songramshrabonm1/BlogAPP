@@ -12,6 +12,7 @@ import { Navbar } from './Component/Navbar'
 import { Header } from './Component/Header'
 import { Newsletter } from './Component/Newsletter'
 import ShuffleHero from './Component/ShuffleHero'
+import PrivateRoute from './pages/PrivateRoute'
 
 function App() {
 
@@ -42,8 +43,10 @@ function App() {
             path="forgetPass"
             element={<ForgetPassword></ForgetPassword>}
           ></Route>
+          <Route path='/private' element={<PrivateRoute></PrivateRoute>}> 
+            <Route path="/dashboard" element={<Dashboard></Dashboard>}></Route>
+          </Route>
           <Route path="/about" element={<About></About>}></Route>
-          <Route path="/dashboard" element={<Dashboard></Dashboard>}></Route>
         </Route>
       </Routes>
     </>
